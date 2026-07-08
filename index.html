@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amma's Kitchen — Authentic South Indian Cuisine</title>
+  <meta name="description" content="Experience authentic South Indian flavors at Amma's Kitchen. Order idly, dosai, puttu, vada, poori, coffee and pazhampuri online." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">🌿</span>
+      <div>
+        <div class="brand-name">Amma's Kitchen</div>
+        <span class="brand-tagline">Authentic South Indian Cuisine</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="showSection('menu')" id="nav-menu">🍽️ Menu</button>
+      <button class="nav-btn" onclick="showSection('manage')" id="nav-manage">⚙️ Manage Menu</button>
+      <button class="nav-btn" onclick="showSection('report')" id="nav-report">📊 Sales Report</button>
+    </div>
+    <button class="cart-btn" onclick="toggleCart()" id="cart-toggle-btn">
+      🛒 Cart
+      <span class="cart-badge" id="cart-badge">0</span>
+    </button>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero-section">
+    <div class="hero-content">
+      <p class="hero-sub">Fresh &amp; Authentic</p>
+      <h1 class="hero-title">Taste the Soul of<br /><span>South India</span></h1>
+      <p class="hero-desc">Handcrafted with love, served with tradition. Every bite tells a story.</p>
+    </div>
+    <div class="hero-wave"></div>
+  </section>
+
+  <!-- ===== MENU SECTION ===== -->
+  <main class="main-content" id="menu-content">
+    <div class="section-header">
+      <h2>Our Menu</h2>
+      <p>Click any item to instantly add it to your cart</p>
+    </div>
+    <div class="category-filters" id="category-filters">
+      <button class="filter-btn active" onclick="filterCategory('All')" data-cat="All">🍴 All</button>
+      <button class="filter-btn" onclick="filterCategory('Breakfast')" data-cat="Breakfast">🌅 Breakfast</button>
+      <button class="filter-btn" onclick="filterCategory('Snacks')" data-cat="Snacks">🍟 Snacks</button>
+      <button class="filter-btn" onclick="filterCategory('Fast Food')" data-cat="Fast Food">🍕 Fast Food</button>
+      <button class="filter-btn" onclick="filterCategory('Non-Veg')" data-cat="Non-Veg">🍗 Non-Veg</button>
+      <button class="filter-btn" onclick="filterCategory('Meals')" data-cat="Meals">🍛 Meals</button>
+      <button class="filter-btn" onclick="filterCategory('Beverages')" data-cat="Beverages">☕ Beverages</button>
+    </div>
+    <div class="menu-grid" id="menu-grid"></div>
+  </main>
+
+  <!-- ===== MANAGE MENU SECTION ===== -->
+  <section class="manage-section hidden" id="manage-content">
+    <div class="section-header">
+      <h2>⚙️ Manage Menu</h2>
+      <p>Add, edit, or remove menu items</p>
+    </div>
+    <div class="manage-form-card">
+      <h3 id="form-title">➕ Add New Item</h3>
+      <form class="item-form" id="item-form" onsubmit="saveMenuItem(event)">
+        <input type="hidden" id="edit-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-name">Item Name *</label>
+            <input type="text" id="f-name" placeholder="e.g. Masala Dosai" required />
+          </div>
+          <div class="form-group">
+            <label for="f-price">Price (₹) *</label>
+            <input type="number" id="f-price" placeholder="e.g. 45" min="1" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-category">Category *</label>
+            <select id="f-category" required>
+              <option value="">Select Category</option>
+              <option value="Breakfast">Breakfast</option>
+              <option value="Snacks">Snacks</option>
+              <option value="Fast Food">Fast Food</option>
+              <option value="Non-Veg">Non-Veg</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Meals">Meals</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-emoji">Emoji Icon</label>
+            <input type="text" id="f-emoji" placeholder="e.g. 🍛" maxlength="4" />
+          </div>
+        </div>
+        <div class="form-group full">
+          <label for="f-desc">Description</label>
+          <input type="text" id="f-desc" placeholder="Short description of the item" />
+        </div>
+        <div class="form-group full">
+          <label for="f-img">Image URL (optional)</label>
+          <input type="text" id="f-img" placeholder="https://... or leave blank to use emoji" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" id="form-submit-btn">➕ Add Item</button>
+          <button type="button" class="btn-secondary" onclick="cancelEdit()" id="form-cancel-btn" style="display:none">✕ Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div class="manage-items-list" id="manage-items-list"></div>
+  </section>
+
+  <!-- ===== SALES REPORT SECTION ===== -->
+  <section class="report-section hidden" id="report-content">
+    <div class="section-header">
+      <h2>📊 Monthly Sales Report</h2>
+      <p>Track your restaurant performance over time</p>
+    </div>
+    <div class="report-stats" id="report-stats"></div>
+    <div class="report-chart-card">
+      <h3>Monthly Revenue</h3>
+      <div class="chart-container" id="chart-container"></div>
+    </div>
+    <div class="report-table-card">
+      <h3>Order History</h3>
+      <div class="table-wrap">
+        <table class="report-table" id="report-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date &amp; Time</th>
+              <th>Items Ordered</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="report-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CART OVERLAY + DRAWER ===== -->
+  <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h2>🛒 Your Order</h2>
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-empty" id="cart-empty">
+      <span class="empty-icon">🍽️</span>
+      <p>Your cart is empty</p>
+      <small>Click on menu items to add them!</small>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none">
+      <div class="bill-breakdown">
+        <div class="bill-row total-row"><span>Total Amount</span><span id="grand-total">₹0.00</span></div>
+      </div>
+      <div class="cart-actions">
+        <button class="btn-clear" id="btn-clear-cart" onclick="clearCart()">🗑️ Clear Cart</button>
+        <button class="btn-print" id="btn-print-bill" onclick="printBill()">🖨️ Print Bill</button>
+        <button class="btn-pay" id="btn-pay-now" onclick="showQRModal()">💳 Pay Now</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== QR PAYMENT MODAL ===== -->
+  <div class="modal-overlay hidden" id="qr-modal-overlay">
+    <div class="modal-card qr-modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeQRModal()">✕</button>
+      <div class="qr-header-icon">💳</div>
+      <h2>Scan to Pay</h2>
+      <div class="qr-amount" id="qr-amount">₹0.00</div>
+      <div class="qr-code-wrap">
+        <canvas id="qr-canvas"></canvas>
+      </div>
+      <p class="qr-upi">UPI ID: <strong>ammaskitchen@upi</strong></p>
+      <p class="qr-hint">Scan with GPay · PhonePe · Paytm · Any UPI App</p>
+      <button class="btn-confirm-pay" id="btn-confirm-payment" onclick="confirmPayment()">✅ Confirm Payment Done</button>
+    </div>
+  </div>
+
+  <!-- ===== DELETE CONFIRM MODAL ===== -->
+  <div class="modal-overlay hidden" id="delete-modal-overlay">
+    <div class="modal-card small-modal" onclick="event.stopPropagation()">
+      <div style="font-size:2.5rem;text-align:center;margin-bottom:0.5rem">🗑️</div>
+      <h3>Delete Item?</h3>
+      <p id="delete-modal-text">Are you sure you want to delete this item?</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PRINT BILL (screen-hidden, print-visible) ===== -->
+  <div id="print-bill" class="print-bill"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="main-footer">
+    <p>🌿 Amma's Kitchen &mdash; Made with ❤️ in Chennai &nbsp;|&nbsp; GSTIN: 33ABCDE1234F1Z5</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
